@@ -24,7 +24,7 @@
 </ul>
 </blockquote>
 
-<h2>Contact Me</h2>
+<h2>有任何建议请联系我</h2>
 <blockquote>
 <p>Author ：York Wu<br>
 Email  ：<a href="mailto:2589179@qq.com">2589179@qq.com</a></p>
