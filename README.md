@@ -1,5 +1,5 @@
 <article>
-#lathe4ssm
+# lathe4ssm
 
 <p><strong>lathe4ssm</strong> 是一个快速生成SSM项目骨架的代码生成工具</p>
 <p> 在mybatis-generator生成的model和dao基础上，生成service, controller, view等基础代码。</p>
