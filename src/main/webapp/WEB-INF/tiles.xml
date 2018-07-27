@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<definition name="base.definition" template="/WEB-INF/views/layout/layout.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="baseCss" value="/WEB-INF/views/snippet/css.html" />
+		<put-attribute name="baseJs" value="/WEB-INF/views/snippet/js.html" />
+		<put-attribute name="header" value="/WEB-INF/views/snippet/header.jsp" />
+		<put-attribute name="menu" value="/WEB-INF/views/snippet/menu.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/views/snippet/footer.jsp" />
+	</definition>
+
+	<!-- 首页 -->
+	<definition name="index" extends="base.definition">
+		<put-attribute name="title" value="首页" />
+		<put-attribute name="body" value="/WEB-INF/views/index.jsp" />
+	</definition>
+
+	<!-- 子模块下默认页面路由 -->
+	<definition name="*/" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/list.jsp" />
+	</definition>
+	
+	<!-- 子模块页面路由 -->
+	<definition name="*/*" extends="base.definition">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+
+</tiles-definitions>

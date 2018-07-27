@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tap.lathe4ssm.web.dao.TableInfoMapper">
+	<resultMap id="BaseResultMap" type="com.tap.lathe4ssm.web.model.TableInfo">
+		<result column="COLUMN_NAME" property="columnName" jdbcType="VARCHAR" />
+		<result column="DATA_TYPE" property="dataType" jdbcType="VARCHAR" />
+		<result column="COLUMN_COMMENT" property="comments" jdbcType="VARCHAR" />
+		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="table_schema" property="tableSchema" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="MySql_Column_List">
+		COLUMN_NAME, DATA_TYPE, COLUMN_COMMENT, table_name,
+		table_schema
+	</sql>
+
+	<sql id="Oracle_Column_List">
+		COLUMN_NAME, DATA_TYPE, '' as COLUMN_COMMENT,
+		a.TABLE_NAME as table_name, '' as table_schema
+	</sql>
+
+	<sql id="Oracle_Column_List_key">
+		   c.COLUMN_NAME as COLUMN_NAME, c.DATA_TYPE as DATA_TYPE, 
+		 '' as COLUMN_COMMENT,   c.TABLE_NAME as table_name, '' as table_schema     
+	</sql>
+
+	<select id="selectTableColumnByMySql" resultType="java.util.LinkedHashMap">
+		select
+		<include refid="MySql_Column_List" />
+		from information_schema.COLUMNS where table_name = #{tableName,
+		jdbcType=VARCHAR} and
+		table_schema = #{tableSchema, jdbcType=VARCHAR}
+		and COLUMN_KEY != "PRI"
+	</select>
+
+	<select id="selectTableColumnByOracle" resultType="java.util.LinkedHashMap">
+		select DISTINCT
+		<include refid="Oracle_Column_List" />
+		from user_tab_columns a, user_tab_comments b
+		where a.table_name =
+		upper(#{tableName,jdbcType=VARCHAR})
+		and a.table_name = b.table_name
+		and column_name not in (select a.column_name
+		from user_cons_columns a,
+		user_constraints b
+		where a.constraint_name = b.constraint_name
+		and
+		b.constraint_type = 'P' and
+		b.table_name=upper(#{tableName,jdbcType=VARCHAR}) )
+	</select>
+
+	<select id="selectTableKeyForMySql" resultMap="BaseResultMap">
+		select
+		<include refid="MySql_Column_List" />
+		from
+		information_schema.COLUMNS where table_name = #{tableName,
+		jdbcType=VARCHAR} and
+		table_schema = #{tableSchema, jdbcType=VARCHAR}
+		and COLUMN_KEY = "PRI"
+	</select>
+
+	<select id="selectTableKeyForOracle" resultMap="BaseResultMap">
+		select DISTINCT
+		<include refid="Oracle_Column_List_key" />
+		from
+		user_constraints a, user_cons_columns b, user_tab_columns c
+		where
+		a.constraint_name=b.constraint_name
+		and   b.COLUMN_NAME=c.COLUMN_NAME
+		and a.constraint_type='P'
+		and
+		c.table_name=upper(#{tableName, jdbcType=VARCHAR})
+	</select>
+
+	<select id="selectTableRowBy" resultType="java.util.LinkedHashMap"
+		statementType="STATEMENT">
+		select * from ${tableName}
+		<if test="condition != null">
+			where ${condition}
+		</if>
+	</select>
+
+</mapper>
